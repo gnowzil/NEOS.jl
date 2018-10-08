@@ -13,7 +13,7 @@ NEOSXpressSolver(server; kwargs...)   = deprecatesolver("Xpress")
 NEOSSYMPHONYSolver(server; kwargs...) = deprecatesolver("SYMPHONY")
 
 # NEOSSolver{:Solver, :Format}
-mutable struct NEOSSolver{S,F} <: AbstractMathProgSolver
+mutable struct NEOSSolver{S,F} <: MPB.AbstractMathProgSolver
     server::NEOSServer
     requires_email::Bool
     solves_sos::Bool
@@ -46,7 +46,8 @@ function NEOSSolver(server::NEOSServer=NEOSServer();
     end
     (template, requires_email, solves_sos, provides_duals) = TEMPLATES[(solver, format)]
     return NEOSSolver{solver, format}(server, requires_email, solves_sos,
-		                      provides_duals, template, params, gzipmodel, print_results, print_level, result_file)
+		                      provides_duals, template, params, gzipmodel,
+                                      print_results, print_level, result_file)
 end
 
 function addparameter!(s::NEOSSolver, param::String, value)

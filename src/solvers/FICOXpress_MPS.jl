@@ -5,7 +5,7 @@ function add_solver_xml!(::NEOSSolver{:Xpress, :MPS}, m::MPSModel)
 	# Add user options
 	param_string = ""
 	for key in keys(m.solver.params)
-		param_string *= "$(key) \= $(m.solver.params[key])\n"
+		param_string *= raw"$(key) \= $(m.solver.params[key])\n"
 	end
 	# Add user options
 	m.xmlmodel = replace(m.xmlmodel, r"(?s)<par>.*</par>", "<par><![CDATA[$(param_string)]]></par>")

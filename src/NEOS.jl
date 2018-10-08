@@ -6,26 +6,25 @@ module NEOS
 using LightXML
 using HTTP
 using CodecZlib
-#using AmplNLWriter
 using SparseArrays
 using Base64
 
-using MathProgBase.SolverInterface
+using AmplNLWriter
+using MathProgBase
+const MPB = MathProgBase
 
 include("NEOSServer.jl")
 include("NEOSSolver.jl")
 include("NEOSSolverInterface.jl")
 include("MPSWriter.jl")
-#include("nl.jl")
+include("nl.jl")
 include("mps.jl")
-
-
 
 include("solvers/CPLEX_MPS.jl")
 include("solvers/MOSEK_MPS.jl")
 include("solvers/SYMPHONY_MPS.jl")
 include("solvers/FICOXpress_MPS.jl")
-#include("solvers/CPLEX_NL.jl")
+include("solvers/CPLEX_NL.jl")
 
 export NEOSServer, NEOSSolver,
     NEOSCPLEXSolver, NEOSMOSEKSolver, NEOSSYMPHONYSolver, NEOSXpressSolver,

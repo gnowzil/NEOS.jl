@@ -2,12 +2,14 @@
 
 module MPSWriter
 
+using SparseArrays
+
 # order, indices, weights
 const SOS = Tuple{Int, Vector{Int}, Vector{Float64}}
 
-function getrowsense(rowlb::Vector{<: Real}, rowub::Vector{<: Real})
+function getrowsense(rowlb::Vector{T1}, rowub::Vector{T2}) where {T1 <: Real, T2 <:Real}
     @assert length(rowlb) == length(rowub)
-    row_sense = Array{Symbol}(length(rowub))
+    row_sense = Array{Symbol}(undef,length(rowub))
     hasranged = false
     for r=1:length(rowlb)
         @assert rowlb[r] <= rowub[r]
