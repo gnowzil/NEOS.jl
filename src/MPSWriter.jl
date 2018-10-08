@@ -5,7 +5,7 @@ module MPSWriter
 # order, indices, weights
 const SOS = Tuple{Int, Vector{Int}, Vector{Float64}}
 
-function getrowsense{T1 <: Real, T2<: Real}(rowlb::Vector{T1}, rowub::Vector{T2})
+function getrowsense(rowlb::Vector{<: Real}, rowub::Vector{<: Real})
     @assert length(rowlb) == length(rowub)
     row_sense = Array{Symbol}(length(rowub))
     hasranged = false
@@ -72,7 +72,7 @@ function writecolumns!(io::IO, A::AbstractMatrix, colcat, c::Vector, sense::Symb
         inconstraint = writecolumn!(io, A, col, colnames, rownames)
     	if abs(c[col]) > 1e-10 || !inconstraint # Non-zeros
     		# Flip signs for maximisation
-            _println(io, "    $(rpad(colnames[col], 8))  $(rpad("OBJ", 8))  ", (sense==:Max?-1:1)*c[col])
+            _println(io, "    $(rpad(colnames[col], 8))  $(rpad("OBJ", 8))  ", (sense==:Max ? -1 : 1)*c[col])
 	    end
     end
     if integer_group
@@ -86,7 +86,7 @@ function _println(io::IO, s::String, x::Number)
     println(io)
 end
 
-function writecolumn!{T, Ti}(io::IO, A::AbstractSparseArray{T, Ti, 2}, col::Int, colnames::Vector{String}, rownames::Vector{String})
+function writecolumn!(io::IO, A::AbstractSparseMatrix{Tv,Ti}, col::Int, colnames::Vector{String}, rownames::Vector{String}) where {Tv,Ti}
     inconstraint = false
     rows, vals = rowvals(A), nonzeros(A)
     for j in nzrange(A, col)
@@ -96,7 +96,7 @@ function writecolumn!{T, Ti}(io::IO, A::AbstractSparseArray{T, Ti, 2}, col::Int,
     inconstraint
 end
 
-function writecolumn!{T}(io::IO, A::Array{T, 2}, col::Int, colnames::Vector{String}, rownames::Vector{String})
+function writecolumn!(io::IO, A::Array{T, 2}, col::Int, colnames::Vector{String}, rownames::Vector{String}) where {T}
     inconstraint = false
     for row in 1:size(A)[1]
         if abs(A[row, col]) > 1e-10 # Non-zero
@@ -111,7 +111,7 @@ function writerhs!(io::IO, rowlb, rowub, row_sense::Vector{Symbol}, rownames::Ve
     @assert length(rowlb) == length(rowub) == length(row_sense)
     println(io, "RHS")
     for row in 1:length(rowlb)
-        _println(io, "    rhs       $(rpad(rownames[row], 8))  ", row_sense[row] == :(<=)?rowub[row]:rowlb[row])
+        _println(io, "    rhs       $(rpad(rownames[row], 8))  ", row_sense[row] == :(<=) ? rowub[row] : rowlb[row])
     end
 end
 
@@ -172,7 +172,7 @@ function writesos!(io::IO, sos::Vector{SOS}, maxvarindex::Int, colnames::Vector{
     end
 end
 
-function writequad!{T, Ti}(io::IO, Q::AbstractSparseArray{T, Ti, 2}, sense::Symbol, colnames::Vector{String})
+function writequad!(io::IO, Q::AbstractSparseMatrix{Tv,Ti}, sense::Symbol, colnames::Vector{String}) where {Tv,Ti}
     @assert sense == :Min || sense == :Max
     println(io, "QMATRIX")
     rows = rowvals(Q)
@@ -189,7 +189,7 @@ end
 
 function writequad!(io::IO, Q::AbstractMatrix, sense::Symbol, colnames::Vector{String})
     @assert sense == :Min || sense == :Max
-    sgn = (sense == :Max?-1:1)
+    sgn = (sense == :Max ? -1 : 1)
     println(io, "QMATRIX")
     for i = 1:size(Q)[2]
         for j in 1:size(Q)[1]

@@ -5,11 +5,12 @@ const UNBOUNDED = :Unbounded
 const INFEASIBLE = :Infeasible
 const UNBNDORINF = :UnboundedOrInfeasible
 
-type NEOSSolverError <: Exception
+struct NEOSSolverError <: Exception
 	msg::String
 end
 
-abstract type NEOSModel <: AbstractMathProgModel end
+#abstract type NEOSModel <: AbstractMathProgModel end
+abstract type NEOSModel end
 
 addemail!(m::NEOSModel, email::String) = addemail!(m.solver, email)
 

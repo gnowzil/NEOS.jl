@@ -29,7 +29,7 @@ mutable struct MPSModel <: NEOSModel
 	MPSModel(solver) = new(solver, "", "", 0, 0, sparse(Int[], Int[], Float64[]), Float64[], Float64[], Float64[], Float64[], Float64[], :Min, Symbol[], SOS[], 0.0, Float64[], Float64[], Float64[], NOTSOLVED)
 end
 
-LinearQuadraticModel{S}(s::NEOSSolver{S, :MPS}) = MPSModel(s)
+LinearQuadraticModel(s::NEOSSolver{S, :MPS} where {S}) = MPSModel(s)
 
 function neos_writexmlmodel!(m::MPSModel)
     io = IOBuffer()
@@ -111,7 +111,7 @@ function getreducedcosts(m::MPSModel)
 	if m.solver.provides_duals
 		return m.reducedcosts
 	else
-		warn("Reduced costs are not available from $(typeof(m.solver)). Try a different solver instead")
+		@warn("Reduced costs are not available from $(typeof(m.solver)). Try a different solver instead")
 		return fill(NaN, m.ncol)
 	end
 end
@@ -120,7 +120,7 @@ function getconstrduals(m::MPSModel)
 	if m.solver.provides_duals
 		return 	m.duals
 	else
-		warn("Constraint duals are not available from $(typeof(m.solver)). Try a different solver instead")
+		@warn("Constraint duals are not available from $(typeof(m.solver)). Try a different solver instead")
 		return fill(NaN, m.nrow)
 	end
 end
